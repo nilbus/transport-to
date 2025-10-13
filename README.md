@@ -1,10 +1,12 @@
-# Open in Comet
+# Transport to
 
-A Chrome extension for Arc browser that opens the current page in Comet browser.
+A Chrome extension for Arc browser that opens pages and links in Comet or Dia browsers.
 
 ## Features
 
 - Click the extension icon to open the current page in Comet browser
+- Right-click context menu with options to open in Comet or Dia browser
+- Context menu works on both pages and links
 - Uses native messaging to communicate with macOS
 - Works in Arc browser (Chromium-based)
 
@@ -12,6 +14,7 @@ A Chrome extension for Arc browser that opens the current page in Comet browser.
 
 - Arc browser installed at `/Applications/Arc.app/`
 - Comet browser installed
+- Dia browser installed (optional, for context menu feature)
 - `jq` command-line tool (install with `brew install jq`)
 
 ## Installation
@@ -38,20 +41,32 @@ This will:
 
 ## Usage
 
+### Quick Open (Icon Click)
+
 1. Browse to any page in Arc browser
-2. Click the Comet icon in the extensions toolbar
+2. Click the "Transport to" icon in the extensions toolbar
 3. The page will open in Comet browser
+
+### Context Menu
+
+1. Right-click anywhere on a page or on a link
+2. Select **"Open in Comet"** or **"Open in Dia"**
+3. The page or link will open in the selected browser
 
 ## Testing
 
 You can test the native messaging host without loading the extension:
 
 ```bash
-# Test with default URL
+# Test with default URL and default app (Comet)
 ./bin/test
 
-# Test with a specific URL
+# Test with a specific URL (Comet)
 ./bin/test "https://example.com"
+
+# Test with Dia using --dia flag
+./bin/test --dia
+./bin/test --dia "https://example.com"
 ```
 
 This script sends a properly formatted native messaging message to the host script, simulating what the browser extension does.
@@ -69,28 +84,28 @@ This script sends a properly formatted native messaging message to the host scri
 - Check for error messages
 - Common issues:
   - Native host manifest not installed (run `./bin/setup` again)
-  - Native host script not executable (`chmod +x native-host/open-in-comet-host.sh`)
+  - Native host script not executable (`chmod +x native-host/transport-to-host.sh`)
   - `jq` not installed (`brew install jq`)
-  - Check native host manifest is in the correct location: `~/Library/Application Support/Arc/NativeMessagingHosts/com.nilbus.openincomet.native.json`
+  - Check native host manifest is in the correct location: `~/Library/Application Support/Arc/NativeMessagingHosts/com.nilbus.transportto.native.json`
 
-### Comet doesn't open
+### Comet or Dia doesn't open
 
-- Verify Comet browser is installed and accessible
-- Try running manually: `open -a Comet "https://example.com"`
+- Verify the browser is installed and accessible
+- Try running manually: `open -a Comet "https://example.com"` or `open -a Dia "https://example.com"`
 
 ## Development
 
 ### Project Structure
 
 ```
-open-in-comet/
+transport-to/
 ├── extension/           # Chrome extension
 │   ├── manifest.json   # Extension manifest (V3) with public key
 │   ├── background.js   # Service worker
 │   └── comet.png       # Extension icon
 ├── native-host/        # Native messaging host
-│   ├── open-in-comet-host.sh              # Bash script
-│   └── com.nilbus.openincomet.native.json # Host manifest
+│   ├── transport-to-host.sh              # Bash script
+│   └── com.nilbus.transportto.native.json # Host manifest
 ├── bin/
 │   ├── setup          # Installation script
 │   └── test           # Test script for native messaging host
@@ -110,11 +125,11 @@ The extension includes a public key in `manifest.json` that ensures a **consiste
 
 Chrome extensions cannot directly execute terminal commands due to browser sandboxing. This extension uses Chrome's **Native Messaging API**:
 
-1. Extension captures the current tab's URL
-2. Sends URL to native messaging host via `chrome.runtime.connectNative()`
+1. Extension captures the current tab's URL (or link URL from context menu)
+2. Sends URL and app name to native messaging host via `chrome.runtime.connectNative()`
 3. Bash script receives the message via stdin (native messaging protocol)
-4. Script executes `open -a Comet "<url>"`
-5. Comet browser opens with the URL
+4. Script executes `open -a <app> "<url>"` (where app is "Comet" or "Dia")
+5. The selected browser opens with the URL
 
 The native host is **not** a long-running process—Chrome starts it when needed and it exits immediately after processing the message.
 

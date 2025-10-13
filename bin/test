@@ -6,14 +6,22 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
+# Check for --dia flag
+APP="Comet"
+if [ "$1" = "--dia" ]; then
+  APP="Dia"
+  shift
+fi
+
 # URL to test with (default to a classic)
 URL="${1:-https://www.youtube.com/watch?v=dQw4w9WgXcQ}"
 
 echo "Testing native messaging host with URL: $URL"
+echo "Target app: $APP"
 echo
 
 # Create the JSON message
-MESSAGE=$(jq -n --arg url "$URL" '{url: $url}')
+MESSAGE=$(jq -n --arg url "$URL" --arg app "$APP" '{url: $url, app: $app}')
 
 # Calculate message length
 LENGTH=${#MESSAGE}
@@ -31,7 +39,7 @@ echo
 
   # Send the message
   printf '%s' "$MESSAGE"
-) | "$PROJECT_DIR/native-host/open-in-comet-host.sh"
+) | "$PROJECT_DIR/native-host/transport-to-host.sh"
 
 echo
 echo "✅ Test complete!"

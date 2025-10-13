@@ -1,0 +1,9 @@
+{
+  "name": "com.nilbus.transportto.native",
+  "description": "Transport URLs to other browsers",
+  "path": "/Users/nilbus/git/transport-to/native-host/transport-to-host.sh",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://mihpdlanccfgaahnagkaeemcdcgaekee/"
+  ]
+}

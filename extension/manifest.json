@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Open in Comet",
+  "name": "Transport to",
   "version": "1.0",
-  "description": "Opens the current page in Comet browser",
+  "description": "Open pages and links in Comet or Dia browsers",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy/pTUnUSi8QxlkOzR6/mb5tc6OBN0uFzGz6dtZ0Nuy58VkYWi1ckaUIbbaR4VSkE9onJTH+gAsD6i4ZMsf16VnhZVXkzjkMAb5dYJkDVkWd4DukI5ta7mj3CWNxI0ru5RG15326y+CU3SPpja48jyue8cTC+OqfN+h6BBwIlwbCRg5+tDbPB9s0PtSvLh5O/PJgJk2POJZZDmFC+OSi7FN80CXjl78FW2uuMiHG5dhJH5dNuaVJJeaaOMmyxb3h8VFhO304QXXVKVtS3ageHUo0O8DT3LWzrPxK8O1jp8P2PzR7sPLC2Wb/AvwqWE1R98y0MovtRglNTN/NmHrkoTwIDAQAB",
   "permissions": [
     "activeTab",
-    "nativeMessaging"
+    "nativeMessaging",
+    "contextMenus"
   ],
   "background": {
     "service_worker": "background.js"
@@ -15,7 +16,7 @@
     "default_icon": {
       "32": "comet.png"
     },
-    "default_title": "Open in Comet"
+    "default_title": "Transport to Comet"
   },
   "icons": {
     "32": "comet.png"

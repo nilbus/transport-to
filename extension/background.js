@@ -1,12 +1,25 @@
-// Listen for clicks on the extension icon
-chrome.action.onClicked.addListener((tab) => {
-  const url = tab.url;
+// Create context menu items
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'open-in-comet',
+    title: 'Comet',
+    contexts: ['page', 'link']
+  });
 
+  chrome.contextMenus.create({
+    id: 'open-in-dia',
+    title: 'Dia',
+    contexts: ['page', 'link']
+  });
+});
+
+// Helper function to open URL in specified app
+function openInApp(url, app) {
   // Connect to native messaging host
-  const port = chrome.runtime.connectNative('com.nilbus.openincomet.native');
+  const port = chrome.runtime.connectNative('com.nilbus.transportto.native');
 
-  // Send the URL to the native host
-  port.postMessage({ url: url });
+  // Send the URL and app name to the native host
+  port.postMessage({ url: url, app: app });
 
   // Handle responses (optional)
   port.onMessage.addListener((response) => {
@@ -19,4 +32,22 @@ chrome.action.onClicked.addListener((tab) => {
       console.error('Native messaging error:', chrome.runtime.lastError.message);
     }
   });
+}
+
+// Listen for context menu clicks
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  // Use link URL if available, otherwise use page URL
+  const url = info.linkUrl || info.pageUrl;
+
+  if (info.menuItemId === 'open-in-comet') {
+    openInApp(url, 'Comet');
+  } else if (info.menuItemId === 'open-in-dia') {
+    openInApp(url, 'Dia');
+  }
+});
+
+// Listen for clicks on the extension icon (default: Comet)
+chrome.action.onClicked.addListener((tab) => {
+  const url = tab.url;
+  openInApp(url, 'Comet');
 });

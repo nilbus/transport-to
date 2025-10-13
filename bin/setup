@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🚀 Setting up Open in Comet extension for Arc browser..."
+echo "🚀 Setting up Transport To extension for Arc browser..."
 echo
 
 # Get the directory where this script is located
@@ -26,23 +26,24 @@ fi
 echo "✓ jq is installed"
 
 # Make the native host script executable
-NATIVE_HOST_SCRIPT="$PROJECT_DIR/native-host/open-in-comet-host.sh"
+NATIVE_HOST_SCRIPT="$PROJECT_DIR/native-host/transport-to-host.sh"
 chmod +x "$NATIVE_HOST_SCRIPT"
 echo "✓ Made native host script executable"
 
-# Create Arc's NativeMessagingHosts directory if it doesn't exist
+# Create NativeMessagingHosts directories if they don't exist
+# Note: Arc browser appears to check Chrome's directory instead of its own
 ARC_NATIVE_HOSTS_DIR="$HOME/Library/Application Support/Arc/NativeMessagingHosts"
+CHROME_NATIVE_HOSTS_DIR="$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
 mkdir -p "$ARC_NATIVE_HOSTS_DIR"
-echo "✓ Created native messaging hosts directory"
+mkdir -p "$CHROME_NATIVE_HOSTS_DIR"
+echo "✓ Created native messaging hosts directories"
 
-# Copy the native host manifest to Arc's directory
-MANIFEST_SOURCE="$PROJECT_DIR/native-host/com.nilbus.openincomet.native.json"
-MANIFEST_DEST="$ARC_NATIVE_HOSTS_DIR/com.nilbus.openincomet.native.json"
-cp "$MANIFEST_SOURCE" "$MANIFEST_DEST"
-echo "✓ Installed native host manifest"
+# Copy the native host manifest to both directories
+MANIFEST_SOURCE="$PROJECT_DIR/native-host/com.nilbus.transportto.native.json"
+cp "$MANIFEST_SOURCE" "$ARC_NATIVE_HOSTS_DIR/com.nilbus.transportto.native.json"
+cp "$MANIFEST_SOURCE" "$CHROME_NATIVE_HOSTS_DIR/com.nilbus.transportto.native.json"
+echo "✓ Installed native host manifest to Arc and Chrome directories"
 
-echo
-echo "✅ Setup complete!"
 echo
 echo "📋 Next steps:"
 echo "1. Open Arc browser and navigate to: arc://extensions"
@@ -50,5 +51,4 @@ echo "2. Enable 'Developer mode' (toggle in the top right)"
 echo "3. Click 'Load unpacked'"
 echo "4. Select: $PROJECT_DIR/extension"
 echo
-echo "The extension is now ready to use—no need to manually edit the manifest or extension ID."
-echo
+echo "✅ Setup complete!"

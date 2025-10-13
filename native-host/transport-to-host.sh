@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Native messaging host for Open in Comet extension
-# Reads a message from stdin and opens the URL in Comet browser
+# Native messaging host for Transport To extension
+# Reads a message from stdin and opens the URL in the specified browser
 
 # Read the message length (4 bytes, little-endian unsigned integer)
 read_length() {
@@ -41,16 +41,18 @@ main() {
   local message
   message=$(read_message "$length")
 
-  # Extract URL from JSON message using jq
+  # Extract URL and app from JSON message using jq
   local url
+  local app
   url=$(echo "$message" | jq -r '.url')
+  app=$(echo "$message" | jq -r '.app // "Comet"')
 
-  # Open URL in Comet browser
+  # Open URL in specified browser
   if [ -n "$url" ]; then
-    open -a Comet "$url"
+    open -a "$app" "$url"
 
     # Send success response
-    send_message '{"status":"success"}'
+    send_message "{\"status\":\"success\",\"app\":\"$app\"}"
   else
     # Send error response
     send_message '{"status":"error","message":"No URL provided"}'
