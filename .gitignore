@@ -1,0 +1,5 @@
+# Plan files
+*.plan.md
+
+# Extension private key (DO NOT COMMIT)
+extension-key.pem

@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+# URL to test with (default to a classic)
+URL="${1:-https://www.youtube.com/watch?v=dQw4w9WgXcQ}"
+
+echo "Testing native messaging host with URL: $URL"
+echo
+
+# Create the JSON message
+MESSAGE=$(jq -n --arg url "$URL" '{url: $url}')
+
+# Calculate message length
+LENGTH=${#MESSAGE}
+
+echo "Sending message to host script:"
+echo "$MESSAGE"
+echo
+
+# Send the message in native messaging format:
+# 1. 4-byte little-endian unsigned integer (message length)
+# 2. JSON message
+(
+  # Send length as 4-byte little-endian unsigned integer
+  printf "$(printf '\\x%02x' $((LENGTH & 0xFF)) $(((LENGTH >> 8) & 0xFF)) $(((LENGTH >> 16) & 0xFF)) $(((LENGTH >> 24) & 0xFF)))"
+
+  # Send the message
+  printf '%s' "$MESSAGE"
+) | "$PROJECT_DIR/native-host/open-in-comet-host.sh"
+
+echo
+echo "✅ Test complete!"

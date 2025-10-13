@@ -1,0 +1,9 @@
+{
+  "name": "com.nilbus.openincomet.native",
+  "description": "Open URLs in Comet browser",
+  "path": "/Users/nilbus/git/open-in-comet/native-host/open-in-comet-host.sh",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://mihpdlanccfgaahnagkaeemcdcgaekee/"
+  ]
+}

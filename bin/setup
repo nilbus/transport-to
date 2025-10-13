@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "🚀 Setting up Open in Comet extension for Arc browser..."
+echo
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Check if Arc browser is installed
+if [ ! -d "/Applications/Arc.app" ]; then
+  echo "❌ Error: Arc browser not found at /Applications/Arc.app/"
+  echo "   Please install Arc browser first."
+  exit 1
+fi
+echo "✓ Arc browser found"
+
+# Check if jq is installed (needed by the native host script)
+if ! command -v jq &> /dev/null; then
+  echo "❌ Error: jq is not installed"
+  echo "   Install it with: brew install jq"
+  exit 1
+fi
+echo "✓ jq is installed"
+
+# Make the native host script executable
+NATIVE_HOST_SCRIPT="$PROJECT_DIR/native-host/open-in-comet-host.sh"
+chmod +x "$NATIVE_HOST_SCRIPT"
+echo "✓ Made native host script executable"
+
+# Create Arc's NativeMessagingHosts directory if it doesn't exist
+ARC_NATIVE_HOSTS_DIR="$HOME/Library/Application Support/Arc/NativeMessagingHosts"
+mkdir -p "$ARC_NATIVE_HOSTS_DIR"
+echo "✓ Created native messaging hosts directory"
+
+# Copy the native host manifest to Arc's directory
+MANIFEST_SOURCE="$PROJECT_DIR/native-host/com.nilbus.openincomet.native.json"
+MANIFEST_DEST="$ARC_NATIVE_HOSTS_DIR/com.nilbus.openincomet.native.json"
+cp "$MANIFEST_SOURCE" "$MANIFEST_DEST"
+echo "✓ Installed native host manifest"
+
+echo
+echo "✅ Setup complete!"
+echo
+echo "📋 Next steps:"
+echo "1. Open Arc browser and navigate to: arc://extensions"
+echo "2. Enable 'Developer mode' (toggle in the top right)"
+echo "3. Click 'Load unpacked'"
+echo "4. Select: $PROJECT_DIR/extension"
+echo
+echo "The extension is now ready to use—no need to manually edit the manifest or extension ID."
+echo
