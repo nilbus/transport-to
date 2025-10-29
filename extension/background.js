@@ -1,14 +1,26 @@
 // Create context menu items
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
+    id: 'open-in-dia',
+    title: 'Dia',
+    contexts: ['page', 'link']
+  });
+
+  chrome.contextMenus.create({
     id: 'open-in-comet',
     title: 'Comet',
     contexts: ['page', 'link']
   });
 
   chrome.contextMenus.create({
-    id: 'open-in-dia',
-    title: 'Dia',
+    id: 'open-in-chrome',
+    title: 'Chrome',
+    contexts: ['page', 'link']
+  });
+
+  chrome.contextMenus.create({
+    id: 'open-in-firefox',
+    title: 'Firefox',
     contexts: ['page', 'link']
   });
 });
@@ -39,10 +51,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   // Use link URL if available, otherwise use page URL
   const url = info.linkUrl || info.pageUrl;
 
-  if (info.menuItemId === 'open-in-comet') {
-    openInApp(url, 'Comet');
-  } else if (info.menuItemId === 'open-in-dia') {
+  if (info.menuItemId === 'open-in-dia') {
     openInApp(url, 'Dia');
+  } else if (info.menuItemId === 'open-in-comet') {
+    openInApp(url, 'Comet');
+  } else if (info.menuItemId === 'open-in-chrome') {
+    openInApp(url, 'Google Chrome');
+  } else if (info.menuItemId === 'open-in-firefox') {
+    openInApp(url, 'Firefox');
   }
 });
 
