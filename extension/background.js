@@ -62,8 +62,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-// Listen for clicks on the extension icon (default: Comet)
+// Listen for clicks on the extension icon (default: Dia)
 chrome.action.onClicked.addListener((tab) => {
   const url = tab.url;
-  openInApp(url, 'Comet');
+  openInApp(url, 'Dia');
 });
